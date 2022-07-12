@@ -64,11 +64,20 @@ final class UtilsTest extends BaseTestCase
         $url = 'https://123456.ngrok.io/auth/shopify/callback?code=0907a61c0c8d55e99db179b68161bc00&&shop=some-shop.myshopify.com&state=0.6784241404160823&timestamp=1337178173';
         $params = Utils::getQueryParams($url);
         $secret = 'test-secret';
-        $params['hmac'] = hash_hmac('sha256', http_build_query($params), $secret);
+        $hmac = hash_hmac('sha256', http_build_query($params), $secret);
 
+        $params['hmac'] = $hmac;
         $this->assertEquals(true, Utils::validateHmac(
             $params,
             $secret
+        ));
+
+        unset($params['hmac']);
+        $params['signature'] = $hmac;
+        $this->assertEquals(true, Utils::validateHmac(
+            $params,
+            $secret,
+            'signature'
         ));
     }
 

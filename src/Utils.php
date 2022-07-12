@@ -51,13 +51,14 @@ final class Utils
      *
      * @param array  $params array of parameters parsed from a URL
      * @param string $secret the secret key associated with the app in the Partners Dashboard
+     * @param string $key    the key for the value of hmac parameter
      *
      * @return bool true if the generated hexdigest is equal to the hmac parameter, false otherwise
      */
-    public static function validateHmac(array $params, string $secret): bool
+    public static function validateHmac(array $params, string $secret, string $key = 'hmac'): bool
     {
-        $hmac = $params['hmac'] ?? '';
-        unset($params['hmac']);
+        $hmac = $params[$key] ?? '';
+        unset($params[$key]);
 
         $computedHmac = hash_hmac('sha256', http_build_query($params), $secret);
 
